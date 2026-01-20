@@ -9,18 +9,31 @@ package com.devops.cicd.order;
  * - quantity doit être strictement positive
  * - unitPrice doit être strictement positif
  *
- * En cas d’erreur, lever IllegalArgumentException.
- *
- * TODO :
- * - implémenter la méthode validate
+ * En cas d'erreur, lever IllegalArgumentException.
  */
 public final class OrderValidator {
 
-    private OrderValidator() {
-        // classe utilitaire
-    }
+    private OrderValidator() {}
 
     public static void validate(Order order) {
-        // TODO: implémenter les règles de validation
+        // La commande ne doit pas être null
+        if (order == null) {
+            throw new IllegalArgumentException("order must not be null");
+        }
+
+        // id ne doit pas être null ni vide
+        if (order.getId() == null || order.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("id must not be null or empty");
+        }
+
+        // quantity doit être strictement positive
+        if (order.getQuantity() <= 0) {
+            throw new IllegalArgumentException("quantity must be greater than 0");
+        }
+
+        // unitPrice doit être strictement positif
+        if (order.getUnitPrice() <= 0) {
+            throw new IllegalArgumentException("unitPrice must be greater than 0");
+        }
     }
 }

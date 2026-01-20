@@ -12,7 +12,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Run unit tests
-        run: mvn test -Dtest=PricingServiceTest,passwordPolicyTest
+        run: mvn test
 
   quality:
     runs-on: ubuntu-latest
