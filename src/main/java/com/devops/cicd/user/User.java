@@ -1,23 +1,40 @@
 package com.devops.cicd.user;
 
-public class User {
+import com.devops.cicd.PasswordPolicy;
+
+final public class User {
 
     private final String email;
     private final String password;
     private final Role role;
 
     public User(String email, String password, Role role) {
-        // TODO: appliquer toutes les règles de validation de la spec
-        // - email: obligatoire, trim, format simple
-        // - password: obligatoire, strong (PasswordPolicy.isStrong)
-        // - role: obligatoire (non null)
-        //
-        // En cas d'erreur: IllegalArgumentException avec un message explicite
-        // ("email must be valid", "password must be strong", "role must not be null")
+        // Validation du role (doit être fait en premier car non null requis)
+        if (role == null) {
+            throw new IllegalArgumentException("role must not be null");
+        }
 
-        this.email = email;       // TODO: email doit être normalisé (trim)
-        this.password = password; // TODO: password ne doit pas être modifié
-        this.role = role;         // TODO: role non null
+        // Validation de l'email
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("email must be valid");
+        }
+        String trimmedEmail = email.trim();
+        if (!EmailValidator.isValid(trimmedEmail)) {
+            throw new IllegalArgumentException("email must be valid");
+        }
+
+        // Validation du password
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("password must be strong");
+        }
+        if (!PasswordPolicy.isStrong(password)) {
+            throw new IllegalArgumentException("password must be strong");
+        }
+
+        // Assignation des valeurs validées
+        this.email = trimmedEmail;  // email normalisé (trim)
+        this.password = password;    // password non modifié
+        this.role = role;            // role non null
     }
 
     public String getEmail() {
@@ -33,9 +50,29 @@ public class User {
     }
 
     public boolean canAccessAdminArea() {
-        // TODO: true uniquement si role == ADMIN
-        return false;
+        return role == Role.ADMIN;
     }
 
-    // BONUS: vous pouvez ajouter equals/hashCode/toString si utile (non obligatoire)
+    // BONUS: equals/hashCode/toString
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        return email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return email.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{email='" + email + "', role=" + role + "}";
+    }
 }
